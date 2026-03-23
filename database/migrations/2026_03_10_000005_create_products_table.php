@@ -17,7 +17,7 @@ return new class extends Migration
                 ->constrained()
                 ->onDelete('restrict');
             $table->string('nombre');
-            $table->string('slug')->unique();
+            $table->string('slug')->unique()->nullable();
             $table->text('descripcion')->nullable();
             $table->decimal('precio', 8, 2);
             $table->decimal('precio_original', 8, 2)->nullable();
