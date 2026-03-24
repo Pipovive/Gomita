@@ -25,7 +25,7 @@ Route::get('/categorias', [CategoryController::class, 'index'])->name('categoria
 Route::get('/categorias/{slug}', [CategoryController::class, 'show'])->name('categorias.show');
 Route::get('/productos', [ProductController::class, 'index'])->name('productos.index');
 Route::get('/productos/{slug}', [ProductController::class, 'show'])->name('productos.show');
-Route::get('/contacto', fn() => view('contacto'));
+Route::get('/contacto', fn() => view('contacto'))->name('contacto');
 Route::get('/ofertas', [ProductController::class, 'ofertas'])->name('ofertas');
 
 //ROUTE CARRITOS (SIN LOGIN)
@@ -45,7 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/perfil', [PerfilController::class, 'index'])->name('perfil.index');
     Route::get('/perfil', [PerfilController::class, 'update'])->name('perfil.update');
 
-    Route::prefix('checkout.')->name('checkout.')->group(function () {
+    Route::prefix('checkout')->name('checkout.')->group(function () {
         Route::get('/', [CheckoutController::class, 'index'])->name('index');
         Route::post('/procesar', [CheckoutController::class, 'procesar'])->name('procesar');
         Route::get('/confirmacion/{orden}', [CheckoutController::class, 'confirmacion'])->name('confirmacion');

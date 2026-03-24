@@ -2,7 +2,7 @@
     <div class="header-inner">
 
         <div class="logo">
-            <a href="perfil.html">
+            <a href="{{ route('home') }}">
                 <img src="Assets/Logo/GomitaLogoCompleto.png" alt="Gomita"
                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
                 <div class="logo-fallback" style="display:none">
@@ -23,21 +23,28 @@
         </div>
 
         <div class="header-actions">
-            <a href="login.html" class="btn-ghost">
-                <svg viewBox="0 0 24 24">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                    <circle cx="12" cy="7" r="4" />
-                </svg>
-                Mi cuenta
-            </a>
-            <a href="carrito.html" class="btn-cart">
+            @auth
+                <a href="{{ route('login') }}">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    {{ auth()->user()->name }}
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="btn-ghost">
+                    Mi cuenta
+                </a>
+            @endauth
+
+            <a href="{{ route('carrito.index') }}" class="btn-cart">
                 <svg viewBox="0 0 24 24">
                     <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
                     <line x1="3" y1="6" x2="21" y2="6" />
                     <path d="M16 10a4 4 0 0 1-8 0" />
                 </svg>
                 Carrito
-                <span class="cart-badge">3</span>
+                <span class="cart-badge">{{ $cartCount }}</span>
             </a>
         </div>
     </div>
@@ -46,16 +53,17 @@
         <div class="nav-inner">
 
             <div class="dropdown">
-                <a href="categorias.html" class="dropdown-toggle">
+                <a href="{{ route('categorias.index') }}" class="dropdown-toggle">
                     🎉 Categorías <span class="arrow">▾</span>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="#">🎂 Cumpleaños</a>
-                    <a href="#">💍 Bodas</a>
-                    <a href="#">🎄 Navidad</a>
-                    <a href="#">🍼 Baby Shower</a>
+                    @foreach ($categorias as $categoria)
+                        <a href="{{ route('categorias.show', $categoria->slug) }}">
+                            {{ $categoria->emoji }} {{ $categoria->nombre }}
+                        </a>
+                    @endforeach
                     <div class="menu-divider"></div>
-                    <a href="categorias.html">Ver todas →</a>
+                    <a href="{{ route('categorias.index') }}">Ver todas →</a>
                 </div>
             </div>
 
@@ -86,7 +94,7 @@
             <div class="nav-spacer"></div>
 
             <a href="#ofertas" class="nav-promo">🔥 Ofertas del día</a>
-            <a href="contacto.html" class="nav-contact">🌟 Contáctanos</a>
+            <a href="{{ route('contacto') }}" class="nav-contact">🌟 Contáctanos</a>
         </div>
     </nav>
 </header>

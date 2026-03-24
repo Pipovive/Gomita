@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -12,7 +13,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categorias = Category::visible()
+            ->ordenada()
+            ->withCount('productosActivos')
+            ->get();
+
+        return view('categorias.index', compact('categorias'));
     }
 
     /**
@@ -34,9 +40,18 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(string $slug)
     {
-        //
+        $categoria = Category::where('slug', $slug)
+            ->visible()
+            ->firstOrFail();
+        $productos = Product::activo()
+            ->enCategoria($slug)
+            ->with('categoria')
+            ->paginate(12);
+        $categorias = Category::visible()->ordenada()->get();
+
+        return view('categorias.show', compact('categoria', 'categorias', 'productos'));
     }
 
     /**
