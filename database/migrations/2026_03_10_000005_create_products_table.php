@@ -36,6 +36,10 @@ return new class extends Migration
             $table->decimal('rating_promedio', 3, 2)->default(0);
             $table->unsignedInteger('resenas_count')->default(0);
             $table->string('archivo_path')->nullable();
+            //localidad fisco o digital
+            $table->enum('modalidad', ['digital', 'fisco', 'ambos'])->default('digital');
+            $table->string('zona_envio')->nullable();
+            $table->integer('stock')->nullable();
             // ruta del archivo descargable en S3/Cloudinary
             $table->timestamps();
             $table->softDeletes();

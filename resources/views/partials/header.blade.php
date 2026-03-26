@@ -68,14 +68,15 @@
             </div>
 
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle">
+                <a href="{{ route('productos.index') }}" class="dropdown-toggle">
                     📦 Tipo de producto <span class="arrow">▾</span>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="#">📦 Cajas</a>
-                    <a href="#">✨ Stickers</a>
-                    <a href="#">🏷️ Etiquetas</a>
-                    <a href="#">🎁 Kits completos</a>
+                    @foreach ($tipos as $tipo)
+                        <a href="{{ route('productos.index', ['tipo' => $tipo->slug]) }}">
+                            {{ $tipo->icono }} {{ $tipo->nombre }}
+                        </a>
+                    @endforeach
                 </div>
             </div>
 
@@ -84,10 +85,14 @@
                     🎨 Estilos <span class="arrow">▾</span>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="#">🦕 Dinosaurios</a>
-                    <a href="#">🤍 Minimalista</a>
-                    <a href="#">🌈 Infantil</a>
-                    <a href="#">🌸 Floral</a>
+                    {{-- Recorre los estilos de la base de datos --}}
+                    @foreach ($estilos as $estilo)
+                        <a href="{{ route('productos.index', ['estilo' => $estilo->slug]) }}">
+                            {{ $estilo->icono }} {{ $estilo->nombre }}
+                        </a>
+                    @endforeach
+                    <div class="menu-divider"></div>
+                    <a href="{{ route('productos.index') }}">Ver todos →</a>
                 </div>
             </div>
 

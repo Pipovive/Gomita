@@ -39,7 +39,7 @@
                         <div class="cat-desc">{{ $categoria->descripcion }}</div>
                         <div class="cat-footer">
                             <span>
-                                🎁 {{ $categoria->productos_activos_count ?? 0 }} + P roductos
+                                🎁 {{ $categoria->productos_activos_count ?? 0 }} ➕ Productos
                             </span>
                             <span class="cat-arrow">→</span>
                         </div>

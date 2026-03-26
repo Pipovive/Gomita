@@ -38,6 +38,12 @@ class Product extends Model implements HasMedia
         'rating_promedio',
         'resenas_count',
         'archivo_path',
+        'descripcion_larga',  // ← nuevo
+        'detalles',           // ← nuevo
+        'category_id',
+        'product_type_id',
+        'modalidad',
+        'style_id',
     ];
 
     protected $casts = [
@@ -48,6 +54,7 @@ class Product extends Model implements HasMedia
         'destacado'          => 'boolean',
         'permite_resenas'    => 'boolean',
         'tags'               => 'array',
+        'detalles'           => 'array'
         // convierte el JSON a array automáticamente
     ];
 
@@ -59,7 +66,8 @@ class Product extends Model implements HasMedia
         return SlugOptions::create()
             ->generateSlugsFrom('nombre')
             ->saveSlugsTo('slug')
-            ->slugsShouldBeNoLongerThan(80);
+            ->slugsShouldBeNoLongerThan(80)
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     // ═══════════════════════════════
@@ -71,7 +79,8 @@ class Product extends Model implements HasMedia
         return LogOptions::defaults()
             ->logOnly(['nombre', 'precio', 'estado', 'destacado'])
             ->logOnlyDirty()
-            ->setDescriptionForEvent(fn(string $eventName) =>
+            ->setDescriptionForEvent(
+                fn(string $eventName) =>
                 "Producto {$eventName}: {$this->nombre}"
             );
     }
@@ -83,7 +92,7 @@ class Product extends Model implements HasMedia
     {
         // imagen principal del producto
         $this->addMediaCollection('imagen')
-             ->singleFile();
+            ->singleFile();
 
         // galería de imágenes adicionales
         $this->addMediaCollection('galeria');
@@ -93,12 +102,12 @@ class Product extends Model implements HasMedia
     {
         // genera thumbnails automáticamente al subir imagen
         $this->addMediaConversion('thumb')
-             ->width(400)
-             ->height(400);
+            ->width(400)
+            ->height(400);
 
         $this->addMediaConversion('card')
-             ->width(800)
-             ->height(800);
+            ->width(800)
+            ->height(800);
     }
 
     // ═══════════════════════════════
@@ -106,7 +115,7 @@ class Product extends Model implements HasMedia
     // ═══════════════════════════════
     public function categoria()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function orderItems()
@@ -119,12 +128,39 @@ class Product extends Model implements HasMedia
         return $this->hasMany(Download::class);
     }
 
+    public function tipo()
+    {
+        return  $this->belongsTo(ProductType::class, 'product_type_id');
+    }
+
+    public function estilo()
+    {
+        return $this->belongsTo(Style::class, 'style_id');
+    }
+
+
     // ═══════════════════════════════
     // SCOPES
     // Product::activo()->get()
-    // Product::destacado()->get()
+    // Product::destacado()->get()php
     // Product::enCategoria('cumpleanos')->get()
     // ═══════════════════════════════
+
+    public function scopeEnEstilo($query, $slug)
+    {
+        return $query->whereHas('estilo', function ($q) use ($slug) {
+            $q->where('slug', $slug);
+        });
+    }
+    public function scopeDelTipo($query, $slug)
+    {
+        return $query->whereHas(
+            'tipo',
+            fn($q) =>
+            $q->where('slug', $slug)
+        );
+    }
+
     public function scopeActivo($query)
     {
         return $query->where('estado', 'activo');
@@ -142,7 +178,9 @@ class Product extends Model implements HasMedia
 
     public function scopeEnCategoria($query, $slug)
     {
-        return $query->whereHas('categoria', fn($q) =>
+        return $query->whereHas(
+            'categoria',
+            fn($q) =>
             $q->where('slug', $slug)
         );
     }
@@ -150,15 +188,15 @@ class Product extends Model implements HasMedia
     public function scopeConDescuento($query)
     {
         return $query->whereNotNull('precio_original')
-                     ->whereColumn('precio', '<', 'precio_original');
+            ->whereColumn('precio', '<', 'precio_original');
     }
 
     public function scopeBuscar($query, $termino)
     {
-        return $query->where(function($q) use ($termino) {
+        return $query->where(function ($q) use ($termino) {
             $q->where('nombre', 'LIKE', "%{$termino}%")
-              ->orWhere('descripcion', 'LIKE', "%{$termino}%")
-              ->orWhereJsonContains('tags', $termino);
+                ->orWhere('descripcion', 'LIKE', "%{$termino}%")
+                ->orWhereJsonContains('tags', $termino);
         });
     }
 
@@ -185,7 +223,7 @@ class Product extends Model implements HasMedia
     public function getTieneDescuentoAttribute(): bool
     {
         return $this->precio_original &&
-               $this->precio < $this->precio_original;
+            $this->precio < $this->precio_original;
     }
 
     public function getPorcentajeDescuentoAttribute(): int
@@ -199,7 +237,7 @@ class Product extends Model implements HasMedia
 
     public function getBadgeLabelAttribute(): string
     {
-        return match($this->badge) {
+        return match ($this->badge) {
             'nuevo'    => '🆕 NUEVO',
             'popular'  => '🔥 POPULAR',
             'oferta'   => "-{$this->porcentaje_descuento}%",
@@ -207,5 +245,20 @@ class Product extends Model implements HasMedia
             'gratis'   => '🆓 GRATIS',
             default    => '',
         };
+    }
+    // Product.php
+    public function scopeDigital($query)
+    {
+        return $query->where('modalidad', 'digital');
+    }
+
+    public function scopeFisico($query)
+    {
+        return $query->where('modalidad', 'fisico');
+    }
+
+    public function scopeModalidad($query, $modalidad)
+    {
+        return $query->where('modalidad', $modalidad);
     }
 }

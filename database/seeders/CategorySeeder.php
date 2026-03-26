@@ -12,6 +12,7 @@ class CategorySeeder extends Seeder
         $categorias = [
             [
                 'nombre'     => 'Cumpleaños',
+                'slug'       => 'cumpleanos',
                 'emoji'      => '🎂',
                 'descripcion' => 'Kits completos, invitaciones y decoración para cumpleaños',
                 'color'      => '#FF6B9D',
@@ -21,6 +22,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Stickers',
+                'slug'       => 'stickers',
                 'emoji'      => '✨',
                 'descripcion' => 'Packs de stickers kawaii imprimibles para toda ocasión',
                 'color'      => '#FFD166',
@@ -30,6 +32,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Baby Shower',
+                'slug'       => 'baby-shower',
                 'emoji'      => '🍼',
                 'descripcion' => 'Decoración y papelería para recibir al bebé',
                 'color'      => '#06D6A0',
@@ -39,6 +42,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Bodas',
+                'slug'       => 'bodas',
                 'emoji'      => '💍',
                 'descripcion' => 'Invitaciones y papelería nupcial elegante',
                 'color'      => '#9B5DE5',
@@ -48,6 +52,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Navidad',
+                'slug'       => 'navidad',
                 'emoji'      => '🎄',
                 'descripcion' => 'Diseños navideños para decorar tus fiestas de fin de año',
                 'color'      => '#FF5252',
@@ -57,6 +62,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Floral',
+                'slug'       => 'floral',
                 'emoji'      => '🌸',
                 'descripcion' => 'Diseños delicados con flores y elementos naturales',
                 'color'      => '#FF9B6B',
@@ -66,6 +72,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Graduación',
+                'slug'       => 'graduacion',
                 'emoji'      => '🎓',
                 'descripcion' => 'Celebrá los logros académicos con estilo',
                 'color'      => '#FFD166',
@@ -75,6 +82,7 @@ class CategorySeeder extends Seeder
             ],
             [
                 'nombre'     => 'Amor',
+                'slug'       => 'amor',
                 'emoji'      => '💕',
                 'descripcion' => 'San Valentín, aniversarios y todo lo romántico',
                 'color'      => '#FF6B9D',
@@ -85,10 +93,9 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categorias as $cat) {
-            Category::firstOrCreate(
-                ['nombre' => $cat['nombre']],
-                $cat
-            );
+            if (!Category::where('nombre', $cat['nombre'])->exists()) {
+                Category::create($cat);
+            }
         }
 
         $this->command->info('✅ Categorías creadas: ' . count($categorias));

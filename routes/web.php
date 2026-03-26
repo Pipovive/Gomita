@@ -24,8 +24,19 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/categorias', [CategoryController::class, 'index'])->name('categorias.index');
 Route::get('/categorias/{slug}', [CategoryController::class, 'show'])->name('categorias.show');
 Route::get('/productos', [ProductController::class, 'index'])->name('productos.index');
+// web.php
+Route::get('/productos/digitales', [ProductController::class, 'digitales'])
+    ->name('productos.digitales');
+
+Route::get('/productos/lanzarote', [ProductController::class, 'lanzarote'])
+    ->name('productos.lanzarote');
+
+// ⚠️ Estas rutas deben ir ANTES de la ruta con {slug}
+Route::get('/productos/{slug}', [ProductController::class, 'show'])
+    ->name('productos.show');
 Route::get('/productos/{slug}', [ProductController::class, 'show'])->name('productos.show');
 Route::get('/contacto', fn() => view('contacto'))->name('contacto');
+Route::get('/contacto', fn() => view('contacto.index'))->name('contacto');
 Route::get('/ofertas', [ProductController::class, 'ofertas'])->name('ofertas');
 
 //ROUTE CARRITOS (SIN LOGIN)
