@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Style;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -59,6 +60,14 @@ class ProductController extends Controller
         if ($request->filled('tipo')) {
             $query->delTipo($request->tipo); // viene como string desde el header
         }
+        //estilo
+
+        if ($request->filled('estilo')) {
+            $query->whereHas('estilo', function ($q) use ($request) {
+                $q->where('slug', $request->estilo);
+            });
+        }
+
 
         // ── Filtro por TIPO DE ARCHIVO (pdf, canva, pptx...) desde el sidebar
         if ($request->filled('formato')) {
@@ -77,8 +86,9 @@ class ProductController extends Controller
 
         $productos = $query->paginate(12);
         $categorias = Category::visible()->ordenada()->get();
+        $estilos = Style::orderBy('orden')->get();
 
-        return view('products.index', compact('productos', 'categorias'));
+        return view('products.index', compact('productos', 'categorias', 'estilos'));
     }
 
     /**

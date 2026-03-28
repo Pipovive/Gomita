@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Style;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -50,8 +51,9 @@ class CategoryController extends Controller
             ->with('categoria')
             ->paginate(12);
         $categorias = Category::visible()->ordenada()->get();
+        $estilos = Style::orderBy('orden')->get();
 
-        return view('categorias.show', compact('categoria', 'categorias', 'productos'));
+        return view('categorias.show', compact('categoria', 'categorias', 'productos', 'estilos'));
     }
 
     /**

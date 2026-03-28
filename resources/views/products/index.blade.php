@@ -82,6 +82,16 @@
                             </label>
                         @endforeach
                     </div>
+                    <div class="filtro-grupo">
+                        <h4>🎨 Estilos</h4>
+                        @foreach ($estilos as $est)
+                            <label>
+                                <input type="radio" name="estilo" value="{{ $est->slug }}"
+                                    {{ request('estilo') == $est->slug ? 'checked' : '' }}>
+                                {{ $est->icono }} {{ $est->nombre }}
+                            </label>
+                        @endforeach
+                    </div>
                     <h4>💰 Precio</h4>
                     <label>
                         <input type="checkbox" name="precio[]" value="gratis"

@@ -70,6 +70,17 @@
                         Más de $10
                     </label>
                 </div>
+                {{-- Filtro por tipo de Estilos --}}
+                <div class="filtro-grupo">
+                    <h4>🎨 Estilos</h4>
+                    @foreach ($estilos as $est)
+                        <label>
+                            <input type="radio" name="estilo" value="{{ $est->slug }}"
+                                {{ request('estilo') == $est->slug ? 'checked' : '' }}>
+                            {{ $est->icono }} {{ $est->nombre }}
+                        </label>
+                    @endforeach
+                </div>
 
                 {{-- Filtro por tipo de archivo --}}
                 <div class="filtro-grupo">
